@@ -1,0 +1,8 @@
+[package]
+org = "ballerinai"
+name = "observe"
+version = "@toml.version@"
+
+[[platform.java11.dependency]]
+path = "../native/build/libs/observe-native-@project.version@.jar"
+
