@@ -18,7 +18,7 @@
 
 package io.ballerina.stdlib.observability.tracing;
 
-import org.ballerinalang.observe.mockextension.BMockSpan;
+import io.ballerina.stdlib.observe.mockextension.BMockSpan;
 import org.ballerinalang.test.util.HttpClientRequest;
 import org.ballerinalang.test.util.HttpResponse;
 import org.testng.Assert;

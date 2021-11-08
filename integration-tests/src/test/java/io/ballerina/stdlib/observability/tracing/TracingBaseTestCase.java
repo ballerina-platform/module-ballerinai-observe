@@ -21,7 +21,7 @@ package io.ballerina.stdlib.observability.tracing;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.ballerina.stdlib.observability.ObservabilityBaseTest;
-import org.ballerinalang.observe.mockextension.BMockSpan;
+import io.ballerina.stdlib.observe.mockextension.BMockSpan;
 import org.ballerinalang.test.util.HttpClientRequest;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
