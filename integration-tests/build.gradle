@@ -33,17 +33,16 @@ configurations {
 dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-core', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    implementation group: 'org.ballerinalang', name: 'ballerina-observability', version: "${ballerinaLangVersion}"
-    testUtils implementation(group: 'org.ballerinalang', name: 'ballerina-test-utils', version:
-            "${ballerinaLangVersion}")
-    testImplementation group: 'org.ballerinalang', name: 'ballerina-metrics-extension', version: "${ballerinaLangVersion}"
+    implementation group: 'io.ballerina.stdlib', name: 'observe-native', version: "1.0.2"
+
+    testUtils implementation(group: 'org.ballerinalang', name: 'ballerina-test-utils',
+            version: "${ballerinaLangVersion}")
+    testImplementation group: 'org.ballerinalang', name: 'ballerina-metrics-extension',
+            version: "${ballerinaLangVersion}"
     implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
 }
 
-//def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
 def ballerinaDist = "build/target/extracted-distributions"
-
-
 
 task unpackJballerinaTools(type: Copy) {
     configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
@@ -52,8 +51,41 @@ task unpackJballerinaTools(type: Copy) {
     }
 }
 
+task unpackStdLibs {
+    doLast {
+        project.configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            project.copy {
+                from project.zipTree(artifact.getFile())
+                into new File("${project.buildDir}/target/extracted-distributions", artifact.name + '-zip')
+            }
+        }
+    }
+}
+
+task copyStdlibs {
+    dependsOn(project.unpackStdLibs)
+    doLast {
+        /* Standard Libraries */
+        project.configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            def artifactExtractedPath = "${project.buildDir}/target/extracted-distributions/" + artifact.name + '-zip'
+            project.copy {
+                def destination = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${project.ballerinaLangVersion}"
+                into destination
+                into('repo/bala') {
+                    from "${artifactExtractedPath}/bala"
+                }
+                into('repo/cache') {
+                    from "${artifactExtractedPath}/cache"
+                }
+            }
+        }
+    }
+}
+
 task copyObserveStdlib {
+    dependsOn(":testobserve-ballerina:build")
     dependsOn(unpackJballerinaTools)
+    dependsOn(copyStdlibs)
     doLast {
         /* Copy Observe module */
         copy {
@@ -81,7 +113,6 @@ test {
     useTestNG() {
         suites 'src/test/resources/testng.xml'
     }
-    systemProperty 'ballerina.home', "${ballerinaDist}/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
     systemProperty 'enableJBallerinaTests', 'true'
     systemProperty 'basedir', "$buildDir"
     systemProperty 'libdir', "$buildDir"
@@ -92,14 +123,6 @@ test {
     systemProperty 'ballerina.agent.port.start.value', 27000
 
     testLogging.showStandardStreams = true
-
-    // For debugging
-    debugOptions {
-        enabled = true
-        port = 4455
-        server = true
-        suspend = true
-    }
 
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
@@ -115,3 +138,4 @@ test {
 }
 
 build.dependsOn ":integration-test-utils-tests:build"
+test.dependsOn ":integration-test-utils-tests:build"

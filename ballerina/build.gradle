@@ -19,7 +19,6 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
     repositories {
-//        mavenLocal()
         maven {
             url = 'https://maven.pkg.github.com/ballerina-platform/plugin-gradle'
             credentials {
@@ -49,11 +48,9 @@ def stripBallerinaExtensionVersion(String extVersion) {
             def strippedValues = splitVersion[0..-4]
             return strippedValues.join('-')
         } else {
-            println "***${extVersion}"
             return extVersion
         }
     } else {
-        println "else **${extVersion}"
         return extVersion.replace("${project.ext.snapshotVersion}", "")
     }
 }
@@ -71,29 +68,10 @@ configurations {
     externalJars
 }
 
-dependencies {
-    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-api', version: "${openTelemetryVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-trace', version: "${openTelemetryVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'io.opentelemetry', name: 'opentelemetry-sdk-testing', version: "${openTelemetryVersion}") {
-        transitive = false
-    }
-    externalJars(group: 'org.testng', name: 'testng', version: "${testngVersion}") {
-        transitive = false
-    }
-}
-
 task updateTomlFiles {
     doLast {
-        def stdlibDependentTestngVersion = project.testngVersion
-        def openTelemetryVersion = project.openTelemetryVersion
         def newBallerinaToml = ballerinaTomlFilePlaceHolder.text.replace("@project.version@", project.version)
         newBallerinaToml = newBallerinaToml.replace("@toml.version@", tomlVersion)
-        newBallerinaToml = newBallerinaToml.replace("@testng.version@", stdlibDependentTestngVersion)
-        newBallerinaToml = newBallerinaToml.replace("@opentelemetry.version@", openTelemetryVersion)
         ballerinaTomlFile.text = newBallerinaToml
     }
 }
@@ -133,10 +111,6 @@ publishing {
 updateTomlFiles.dependsOn copyStdlibs
 
 build.mustRunAfter ":observe-native:build"
-//build.finalizedBy ":observe-ballerina-tests:build"
-//test.dependsOn ":${packageName}-native:build"
-//test.dependsOn ":${packageName}-compiler-plugin:build"
-//test.finalizedBy ":observe-ballerina-tests:build"
 
 publishToMavenLocal.dependsOn build
 publish.dependsOn build

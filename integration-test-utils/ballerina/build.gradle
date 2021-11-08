@@ -106,5 +106,4 @@ task commitTomlFiles {
 
 updateTomlFiles.dependsOn copyStdlibs
 
-test.dependsOn ':integration-test-utils-native:build'
-test.finalizedBy(build)
+build.dependsOn ':integration-test-utils-native:build'

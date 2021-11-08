@@ -52,8 +52,6 @@ task unpackJballerinaTools(type: Copy) {
 }
 
 task copyObserveStdlib {
-    println "${ballerinaDist}"
-    println "${project.buildDir}"
     dependsOn(":testobserve-ballerina:build")
     dependsOn(unpackJballerinaTools)
     doLast {
@@ -78,7 +76,6 @@ test {
     useTestNG() {
         suites 'src/test/resources/testng.xml'
     }
-    systemProperty 'ballerina.home', "${ballerinaDist}/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
     systemProperty 'enableJBallerinaTests', 'true'
     systemProperty 'basedir', "$buildDir"
     systemProperty 'libdir', "$buildDir"
@@ -89,14 +86,6 @@ test {
     systemProperty 'ballerina.agent.port.start.value', 27000
 
     testLogging.showStandardStreams = true
-
-    // For debugging
-//    debugOptions {
-//        enabled = true
-//        port = 4455
-//        server = true
-//        suspend = true
-//    }
 
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
