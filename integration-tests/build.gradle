@@ -33,7 +33,7 @@ configurations {
 dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-core', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    implementation group: 'io.ballerina.stdlib', name: 'observe-native', version: "1.0.2"
+    implementation group: 'io.ballerina.stdlib', name: 'observe-native', version: "${stdLibObservabilityVersion}"
 
     testUtils implementation(group: 'org.ballerinalang', name: 'ballerina-test-utils',
             version: "${ballerinaLangVersion}")
