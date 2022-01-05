@@ -1,7 +1,0 @@
-[package]
-org = "ballerina"
-name = "testobserve"
-version = "0.0.0"
-
-[[platform.java11.dependency]]
-path = "../native/build/libs/integration-test-utils-native-@project.version@-all.jar"

@@ -22,11 +22,8 @@ import org.ballerinalang.test.context.BServerInstance;
 import org.ballerinalang.test.context.BalServer;
 import org.ballerinalang.test.context.BallerinaTestException;
 import org.ballerinalang.test.context.Utils;
-import org.testng.Assert;
 
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,29 +32,20 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import static io.ballerina.runtime.internal.configurable.providers.toml.TomlConstants.CONFIG_FILES_ENV_VARIABLE;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Base Test Case of all Observability related test cases.
  */
 public class ObservabilityBaseTest extends BaseTest {
-    private static BServerInstance servicesServerInstance;
 
-    private static final String OBESERVABILITY_TEST_UTILS_BALA = System.getProperty("observability.test.utils.bala");
-    private static final String OBESERVABILITY_TEST_UTILS_JAR = System.getProperty("observability.test.utils.jar");
-    private static final String BALLERINA_TOML_TEST_NATIVES_JAR_NAME = "observability-test-utils.jar";
+    private static BServerInstance servicesServerInstance;
 
     protected static final String SERVER_CONNECTOR_NAME = "testobserve_listener";
     private static final Logger LOGGER = Logger.getLogger(ObservabilityBaseTest.class.getName());
     private static BalServer balServer;
 
     protected void setupServer(String testProject, String packageName, int[] requiredPorts) throws Exception {
-        try {
-            balServer = new BalServer();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        balServer = new BalServer();
 
         String sourcesDir = Paths.get("src", "test", "resources", "observability", testProject).toFile()
                 .getAbsolutePath();
@@ -82,25 +70,5 @@ public class ObservabilityBaseTest extends BaseTest {
         }
         servicesServerInstance.removeAllLeechers();
         servicesServerInstance.shutdownServer();
-    }
-
-    private void copyDir(Path source, Path dest) throws IOException {
-        Files.walk(source).forEach(sourcePath -> {
-            Path relativeSourcePath = source.relativize(sourcePath);
-            try {
-                Path targetPath = dest.resolve(relativeSourcePath.toString());
-                if (!targetPath.toFile().isDirectory() || !targetPath.toFile().exists()) {
-                    copyFile(sourcePath, targetPath);
-                }
-            } catch (IOException ex) {
-                Assert.fail("Failed to copy file " + relativeSourcePath + " in directory " + source.toString()
-                        + " to " + dest.toString(), ex);
-            }
-        });
-    }
-
-    private void copyFile(Path source, Path dest) throws IOException {
-        dest.getParent().toFile().mkdirs();     // Create parent directory
-        Files.copy(source, dest, REPLACE_EXISTING);
     }
 }

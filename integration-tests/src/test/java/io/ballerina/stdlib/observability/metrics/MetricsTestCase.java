@@ -63,17 +63,11 @@ public class MetricsTestCase extends ObservabilityBaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void setup() throws Exception {
-
-        try {
-            super.setupServer(TEST_SRC_PROJECT_NAME, TEST_SRC_PACKAGE_NAME, new int[]{10090, 10091, 10092});
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        super.setupServer(TEST_SRC_PROJECT_NAME, TEST_SRC_PACKAGE_NAME, new int[]{10090, 10091, 10092});
     }
 
     @AfterClass(alwaysRun = true)
     public void cleanup() throws Exception {
-
         super.cleanupServer();
     }
 
@@ -84,7 +78,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      * @throws IOException if fetching metrics from the test service fails
      */
     private Metrics getMetrics() throws IOException {
-
         String requestUrl = "http://localhost:10090/metricsRegistry/getMetrics";
         String data = HttpClientRequest.doPost(requestUrl, "", Collections.emptyMap()).getData();
         Type type = new TypeToken<Metrics>() {
@@ -102,7 +95,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      * @return The filtered metrics list
      */
     private Metrics filterByTag(Metrics metrics, String key, String value) {
-
         Metrics filteredMetrics = new Metrics();
         filteredMetrics.addAllCounters(filterByTag(metrics.getCounters(), key, value));
         filteredMetrics.addAllGauges(filterByTag(metrics.getGauges(), key, value));
@@ -121,7 +113,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      * @return The filtered metrics list
      */
     private <M extends MockMetric> List<M> filterByTag(List<M> metrics, String key, String value) {
-
         return metrics.stream()
                 .filter(metric -> {
                     Optional<Tag> tag = metric.getId().getTags().stream()
@@ -143,7 +134,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      */
     private void testFunctionMetrics(Metrics allMetrics, String invocationPosition, long invocationCount,
                                      Tag... additionalTags) {
-
         testFunctionMetrics(allMetrics, invocationPosition, invocationCount, additionalTags, null);
     }
 
@@ -158,7 +148,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      */
     private void testFunctionMetrics(Metrics allMetrics, String invocationPosition, long invocationCount,
                                      Tag[] startObservationTags, Tag[] additionalObservationTags) {
-
         Metrics functionMetrics = filterByTag(allMetrics, "src.position", invocationPosition);
 
         Set<Tag> startTags = new HashSet<>(Arrays.asList(startObservationTags));
@@ -182,7 +171,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      * @param tags            Tags that should be present in all the metrics
      */
     private void testFunctionCounters(long invocationCount, Metrics functionMetrics, Set<Tag> tags) {
-
         Assert.assertEquals(functionMetrics.getCounters().stream()
                         .map(gauge -> gauge.getId().getName())
                         .collect(Collectors.toSet()),
@@ -216,7 +204,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      */
     private void testFunctionGauges(long invocationCount, Metrics functionMetrics, Set<Tag> startTags,
                                     Set<Tag> endTags) {
-
         Assert.assertEquals(functionMetrics.getGauges().stream()
                         .map(gauge -> gauge.getId().getName())
                         .collect(Collectors.toSet()),
@@ -250,7 +237,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      * @param gauge           The gauge to be tested
      */
     private void testFunctionResponseTimeGaugeMetrics(long invocationCount, Set<Tag> tags, MockGauge gauge) {
-
         Assert.assertEquals(gauge.getId().getTags(), tags);
         Assert.assertEquals(gauge.getCount(), invocationCount);
         if (invocationCount > 0) {
@@ -277,7 +263,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      * @param snapshot        The snapshot to test
      */
     private void testFunctionResponseTimeGaugeSnapshot(long invocationCount, Snapshot snapshot) {
-
         List<Duration> durations = Arrays.asList(Duration.ofSeconds(10), Duration.ofMinutes(1),
                 Duration.ofMinutes(5));
         Assert.assertTrue(durations.contains(snapshot.getTimeWindow()), "time window "
@@ -318,7 +303,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
      */
     private void testFunctionResponseTimeGaugeSnapshotPercentile(long invocationCount,
                                                                  PercentileValue percentileValue) {
-
         List<Double> expectedPercentiles = Arrays.asList(0.33, 0.5, 0.66, 0.75, 0.95, 0.99, 0.999);
         Assert.assertTrue(expectedPercentiles.contains(percentileValue.getPercentile()),
                 "percentile " + percentileValue.getPercentile()
@@ -334,7 +318,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
 
     @Test
     public void testMainFunction() throws Exception {
-
         String fileName = "01_main_function.bal";
 
         Metrics metrics = this.getMetrics();
@@ -359,7 +342,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
 
     @Test(enabled = false)
     public void testResourceFunction() throws Exception {
-
         String fileName = "02_resource_function.bal";
         String serviceName = "testServiceOne";
         String resourceName = "resourceOne";
@@ -401,7 +383,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
 
     @Test(enabled = false)
     public void testWorkers() throws Exception {
-
         String fileName = "02_resource_function.bal";
         String serviceName = "testServiceOne";
         String resourceName = "resourceTwo";
@@ -443,7 +424,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
 
     @Test(enabled = false)
     public void testCustomMetricTags() throws Exception {
-
         String fileName = "03_custom_metric_tags.bal";
         String serviceName = "testServiceTwo";
         String resourceName = "testAddTagToMetrics";

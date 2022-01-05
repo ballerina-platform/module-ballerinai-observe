@@ -14,20 +14,25 @@ plugins {
 rootProject.name = 'module-ballerinai-observe'
 
 include ':checkstyle'
+include ':testobserve-native'
+include ':testobserve-ballerina'
+include ':testobserve-ballerina-tests'
 include ':observe-native'
 include ':observe-ballerina'
-include ':integration-test-utils-native'
-include ':testobserve-ballerina'
-include ':integration-test-utils-tests'
 include ':observe-ballerina-integration-tests'
 
-
 project(':checkstyle').projectDir = file("build-config${File.separator}checkstyle")
+
+// Integration Test Utils
+project(':testobserve-native').projectDir = file("testobserve${File.separator}native")
+project(':testobserve-ballerina').projectDir = file("testobserve${File.separator}ballerina")
+project(':testobserve-ballerina-tests').projectDir = file("testobserve${File.separator}tests")
+
+// Observe Internal
 project(':observe-native').projectDir = file('native')
 project(':observe-ballerina').projectDir = file('ballerina')
-project(':integration-test-utils-native').projectDir = file("integration-test-utils${File.separator}native")
-project(':testobserve-ballerina').projectDir = file("integration-test-utils${File.separator}ballerina")
-project(':integration-test-utils-tests').projectDir = file("integration-test-utils${File.separator}tests")
+
+// Integration tests
 project(':observe-ballerina-integration-tests').projectDir = file('integration-tests')
 
 gradleEnterprise {
