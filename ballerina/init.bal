@@ -34,16 +34,16 @@ function init() {
 }
 
 function externEnableMetrics(string provider) returns error? = @java:Method {
-    'class: "io.ballerina.stdlib.observei.NativeFunctions",
+    'class: "io.ballerina.stdlib.observe.internal.NativeFunctions",
     name: "enableMetrics"
 } external;
 
 function externEnableTracing(string provider) returns error? = @java:Method {
-    'class: "io.ballerina.stdlib.observei.NativeFunctions",
+    'class: "io.ballerina.stdlib.observe.internal.NativeFunctions",
     name: "enableTracing"
 } external;
 
 function externPrintError(string message) = @java:Method {
-    'class: "io.ballerina.stdlib.observei.NativeFunctions",
+    'class: "io.ballerina.stdlib.observe.internal.NativeFunctions",
     name: "printError"
 } external;

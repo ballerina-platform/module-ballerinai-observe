@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.ballerina.stdlib.observei;
+package io.ballerina.stdlib.observe.internal;
 
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BString;

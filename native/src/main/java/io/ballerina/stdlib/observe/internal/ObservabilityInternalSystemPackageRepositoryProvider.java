@@ -16,7 +16,7 @@
  * under the License.
  *
  */
-package io.ballerina.stdlib.observei;
+package io.ballerina.stdlib.observe.internal;
 
 import org.ballerinalang.annotation.JavaSPIService;
 import org.ballerinalang.spi.SystemPackageRepositoryProvider;
