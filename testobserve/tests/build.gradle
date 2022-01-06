@@ -18,7 +18,9 @@
 apply plugin: 'java'
 
 configurations {
-    jbalTools
+    jbalTools{
+        transitive false
+    }
     testUtils {
         transitive false
     }
