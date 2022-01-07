@@ -70,7 +70,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId project.group
-            artifactId "observei-native"
+            artifactId "observe-native"
             version = project.version
             artifact jar
         }
