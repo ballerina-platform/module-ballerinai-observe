@@ -70,7 +70,7 @@ subprojects {
             transitive = false
         }
         /* Standard libraries */
-        ballerinaStdLibs "io.ballerina.stdlib:observe-ballerina:${stdLibObserveVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:observe-ballerina:${observeVersion}"
     }
 }
 
