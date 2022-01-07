@@ -1,0 +1,137 @@
+/*
+ * Copyright (c) 2022, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+apply plugin: 'java'
+
+configurations {
+    jbalTools {
+        transitive false
+    }
+    testUtils {
+        transitive false
+    }
+}
+
+dependencies {
+    implementation group: 'org.ballerinalang', name: 'ballerina-core', version: "${ballerinaLangVersion}"
+    implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+    implementation group: 'io.ballerina.stdlib', name: 'observe-native', version: "${observeVersion}"
+    testUtils implementation(group: 'org.ballerinalang', name: 'ballerina-test-utils',
+            version: "${ballerinaLangVersion}")
+    testImplementation group: 'org.ballerinalang', name: 'ballerina-metrics-extension',
+            version: "${ballerinaLangVersion}"
+    implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+}
+
+def ballerinaDist = "build/target/extracted-distributions"
+
+task unpackJballerinaTools(type: Copy) {
+    configurations.jbalTools.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        from zipTree(artifact.getFile())
+        into new File(ballerinaDist, "jballerina-tools-zip")
+    }
+}
+
+task unpackStdLibs {
+    doLast {
+        project.configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            project.copy {
+                from project.zipTree(artifact.getFile())
+                into new File("${project.buildDir}/target/extracted-distributions", artifact.name + '-zip')
+            }
+        }
+    }
+}
+
+task copyStdlibs {
+    dependsOn(project.unpackStdLibs)
+    doLast {
+        /* Standard Libraries */
+        project.configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            def artifactExtractedPath = "${project.buildDir}/target/extracted-distributions/" + artifact.name + '-zip'
+            project.copy {
+                def destination = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${project.ballerinaLangVersion}"
+                into destination
+                into('repo/bala') {
+                    from "${artifactExtractedPath}/bala"
+                }
+                into('repo/cache') {
+                    from "${artifactExtractedPath}/cache"
+                }
+            }
+        }
+    }
+}
+
+task copyObserveStdlib {
+    dependsOn(":testobserve-ballerina:build")
+    dependsOn(unpackJballerinaTools)
+    dependsOn(copyStdlibs)
+    doLast {
+        /* Copy Observe module */
+        copy {
+            from "$project.rootDir/testobserve/ballerina/build/bala_unzipped/bala"
+            into "${ballerinaDist}/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/bala"
+        }
+
+        /* Copy Observe Internal module */
+        copy {
+            from "$project.rootDir/ballerina/build/bala_unzipped/bala"
+            into "${ballerinaDist}/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/repo/bala"
+        }
+    }
+}
+
+task createServerZip(type: Zip) {
+    dependsOn copyObserveStdlib
+
+    archiveFileName = "jballerina-tools-${ballerinaLangVersion}.zip"
+    destinationDirectory = file("${buildDir}/repacked-distributions")
+    from "${project.buildDir}/target/extracted-distributions/jballerina-tools-zip/"
+}
+
+test {
+    dependsOn createServerZip
+    useTestNG() {
+        suites 'src/test/resources/testng.xml'
+    }
+    systemProperty 'enableJBallerinaTests', 'true'
+    systemProperty 'basedir', "$buildDir"
+    systemProperty 'libdir', "$buildDir"
+    systemProperty 'server.zip', createServerZip.outputs.files.singleFile
+    systemProperty 'jballerina.server.zip', createServerZip.outputs.files.singleFile
+    systemProperty 'java.util.logging.config.file', "$buildDir/resources/test/logging.properties"
+    systemProperty 'ballerina.agent.path', configurations.testUtils.asPath
+    systemProperty 'ballerina.agent.port.start.value', 27000
+
+    testLogging.showStandardStreams = true
+
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
+
+build.dependsOn ":testobserve-ballerina-tests:build"
+test.dependsOn ":testobserve-ballerina-tests:build"
