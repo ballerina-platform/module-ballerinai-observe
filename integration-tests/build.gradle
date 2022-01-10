@@ -58,6 +58,7 @@ task unpackStdLibs {
 }
 
 task copyStdlibs {
+    dependsOn(project.unpackJballerinaTools)
     dependsOn(project.unpackStdLibs)
     doLast {
         /* Standard Libraries */

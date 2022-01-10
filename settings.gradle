@@ -17,7 +17,7 @@ include ':checkstyle'
 include ':testobserve-native'
 include ':testobserve-ballerina'
 include ':testobserve-ballerina-tests'
-include ':observe-native'
+include ':observe-internal-native'
 include ':observe-ballerina'
 include ':observe-ballerina-integration-tests'
 
@@ -29,7 +29,7 @@ project(':testobserve-ballerina').projectDir = file("testobserve${File.separator
 project(':testobserve-ballerina-tests').projectDir = file("testobserve${File.separator}tests")
 
 // Observe Internal
-project(':observe-native').projectDir = file('native')
+project(':observe-internal-native').projectDir = file('native')
 project(':observe-ballerina').projectDir = file('ballerina')
 
 // Integration tests

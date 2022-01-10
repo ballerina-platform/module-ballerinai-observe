@@ -4,5 +4,4 @@ name = "observe"
 version = "@toml.version@"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/observe-native-@project.version@.jar"
-
+path = "../native/build/libs/observe-internal-native-@project.version@.jar"

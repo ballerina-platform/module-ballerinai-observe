@@ -44,11 +44,11 @@ public function main() returns error? {
     service object {} testServiceInMain = service object {
         resource function post resourceOne(testobserve:Caller caller, string body) {
             int numberCount = checkpanic 'int:fromString(body);
-            var sum = 0;
+            var total = 0;
             foreach var i in 1 ... numberCount {
-                sum = sum + i;
+                total = total + i;
             }
-            checkpanic caller->respond("Sum of numbers: " + sum.toString());
+            checkpanic caller->respond("Sum of numbers: " + total.toString());
         }
     };
     var testObserveListener = new testobserve:Listener(19091);
