@@ -16,7 +16,7 @@
 -->
 
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="jBallerina-Test-Suite">
+<suite name="Observe Integration Test-Suite">
     <groups>
         <run>
             <include name="tracing-test" />

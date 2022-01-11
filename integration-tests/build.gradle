@@ -119,9 +119,11 @@ test {
     systemProperty 'ballerina.agent.path', configurations.testUtils.asPath
     systemProperty 'ballerina.agent.port.start.value', 27000
 
-    testLogging.showStandardStreams = true
-
     testLogging {
+        showStackTraces true
+        showStandardStreams true
+        events "failed"
+        exceptionFormat "full"
         events "PASSED", "FAILED", "SKIPPED"
         afterSuite { desc, result ->
             if (!desc.parent) { // will match the outermost suite
