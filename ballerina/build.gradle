@@ -110,8 +110,8 @@ publishing {
 
 updateTomlFiles.dependsOn copyStdlibs
 
-build.mustRunAfter ":observe-native:build"
-test.dependsOn ":observe-native:build"
+build.mustRunAfter ":observe-internal-native:build"
+test.dependsOn ":observe-internal-native:build"
 
 publishToMavenLocal.dependsOn build
 publish.dependsOn build
