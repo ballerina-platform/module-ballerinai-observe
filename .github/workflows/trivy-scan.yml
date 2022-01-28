@@ -21,10 +21,11 @@ jobs:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew build -x check -x test --stacktrace --console=plain
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '/github/workspace/ballerina/lib'
-          format: 'table'
-          exit-code: '1'
+# Disabled since we are not using any external libraries
+#      - name: Run Trivy vulnerability scanner
+#        uses: aquasecurity/trivy-action@master
+#        with:
+#          scan-type: 'fs'
+#          scan-ref: '/github/workspace/ballerina/lib'
+#          format: 'table'
+#          exit-code: '1'
