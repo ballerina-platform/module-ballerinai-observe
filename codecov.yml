@@ -1,8 +1,5 @@
-coverage:
-  precision: 2
-  round: down
-  range: "60...80"
-  status:
-    project:
-      default:
-        target: 80
+fixes:
+  - "ballerinai/observe/*/::ballerina/"
+
+ignore:
+  - "**/tests"
