@@ -20,7 +20,7 @@ This module contains internal configurations and initializations for Ballerina o
 
       > **Note:** Set the JAVA_HOME environment variable to the path name of the directory into which you installed JDK.
 
-2. Export GitHub Personal access token with read package permissions as follows,
+2. Export your GitHub Personal access token with read package permissions as follows.
 
         export packageUser=<Username>
         export packagePAT=<Personal access token>
