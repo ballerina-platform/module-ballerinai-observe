@@ -4,4 +4,4 @@ name = "observe"
 version = "1.0.3"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/observe-internal-native-1.0.3-SNAPSHOT.jar"
+path = "../native/build/libs/observe-internal-native-1.0.3.jar"
