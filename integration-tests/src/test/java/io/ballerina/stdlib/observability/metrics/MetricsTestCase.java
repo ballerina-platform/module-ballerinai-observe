@@ -340,7 +340,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
                            );
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testResourceFunction() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "testServiceOne";
@@ -381,7 +381,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
                            );
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testWorkers() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "testServiceOne";
@@ -422,7 +422,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
                            );
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testCustomMetricTags() throws Exception {
         String fileName = "03_custom_metric_tags.bal";
         String serviceName = "testServiceTwo";
