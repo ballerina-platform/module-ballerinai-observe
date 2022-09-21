@@ -29,7 +29,6 @@ def packageName = "observe"
 dependencies {
 
     shadow "com.google.code.gson:gson:${gsonVersion}"
-    shadow "org.ballerinalang:ballerina-core:${ballerinaLangVersion}"
     shadow "org.ballerinalang:ballerina-lang:${ballerinaLangVersion}"
     shadow "org.ballerinalang:annotations:${ballerinaLangVersion}"
 
