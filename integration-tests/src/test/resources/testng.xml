@@ -20,6 +20,7 @@
     <groups>
         <run>
             <include name="tracing-test" />
+            <include name="metrics-test" />
         </run>
     </groups>
     <test name="ballerina-observability-integration-tests" parallel="false">

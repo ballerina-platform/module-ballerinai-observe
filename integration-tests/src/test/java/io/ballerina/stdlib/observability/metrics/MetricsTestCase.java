@@ -49,17 +49,19 @@ import java.util.stream.Collectors;
 /**
  * Metrics related Test Cases.
  */
+@Test(groups = "metrics-test")
 public class MetricsTestCase extends ObservabilityBaseTest {
 
     protected static final String TEST_SRC_PROJECT_NAME = "metrics_tests";
     private static final String TEST_SRC_ORG_NAME = "intg_tests";
     protected static final String TEST_SRC_PACKAGE_NAME = "metrics_tests";
-    private static final String MODULE_ID = TEST_SRC_ORG_NAME + "/" + TEST_SRC_PACKAGE_NAME + ":0.0.1";
+    private static final String PATH_SEPARATOR = "/";
+    private static final String MODULE_ID = TEST_SRC_ORG_NAME + PATH_SEPARATOR + TEST_SRC_PACKAGE_NAME + ":0.0.1";
 
-    protected static final String MOCK_CLIENT_OBJECT_NAME = TEST_SRC_ORG_NAME + "/" + TEST_SRC_PACKAGE_NAME
+    protected static final String MOCK_CLIENT_OBJECT_NAME = TEST_SRC_ORG_NAME + PATH_SEPARATOR + TEST_SRC_PACKAGE_NAME
             + "/MockClient";
-    protected static final String OBSERVABLE_ADDER_OBJECT_NAME = TEST_SRC_ORG_NAME + "/" + TEST_SRC_PACKAGE_NAME
-            + "/ObservableAdder";
+    protected static final String OBSERVABLE_ADDER_OBJECT_NAME = TEST_SRC_ORG_NAME + PATH_SEPARATOR +
+            TEST_SRC_PACKAGE_NAME + "/ObservableAdder";
 
     @BeforeClass(alwaysRun = true)
     public void setup() throws Exception {
@@ -326,28 +328,28 @@ public class MetricsTestCase extends ObservabilityBaseTest {
                 Tag.of("src.main", "true"),
                 Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
                 Tag.of("entrypoint.function.name", "main")
-                           );
+        );
         testFunctionMetrics(metrics, fileName + ":24:24", 1,
                 Tag.of("src.object.name", OBSERVABLE_ADDER_OBJECT_NAME),
                 Tag.of("src.function.name", "getSum"),
                 Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
                 Tag.of("entrypoint.function.name", "main")
-                           );
+        );
         testFunctionMetrics(metrics, fileName + ":38:12", 3,
                 Tag.of("src.function.name", "calculateSumWithObservability"),
                 Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
                 Tag.of("entrypoint.function.name", "main")
-                           );
+        );
     }
 
-    @Test(enabled = true)
+    @Test
     public void testResourceFunction() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "testServiceOne";
         String resourceName = "resourceOne";
 
         HttpResponse httpResponse = HttpClientRequest.doPost(
-                "http://localhost:10091/" + serviceName + "/" + resourceName, "15", Collections.emptyMap());
+                "http://localhost:10091/" + serviceName + PATH_SEPARATOR + resourceName, "15", Collections.emptyMap());
         Assert.assertEquals(httpResponse.getResponseCode(), 500);
         Assert.assertEquals(httpResponse.getData(), "Test Error");
         Thread.sleep(1000);
@@ -355,40 +357,49 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         Metrics metrics = this.getMetrics();
         testFunctionMetrics(metrics, fileName + ":23:5", 1,
                 Tag.of("src.service.resource", "true"),
-                Tag.of("src.object.name", SERVER_CONNECTOR_NAME),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName),
+                Tag.of("src.object.name", PATH_SEPARATOR + serviceName),
+                Tag.of("src.resource.path", PATH_SEPARATOR + "resourceOne"),
+                Tag.of("src.resource.accessor", "post"),
+                Tag.of("listener.name", SERVER_CONNECTOR_NAME),
+                Tag.of("entrypoint.service.name", PATH_SEPARATOR + serviceName),
+                Tag.of("entrypoint.function.name", PATH_SEPARATOR + resourceName),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
                 Tag.of("protocol", "http"),
                 Tag.of("http.url", "/testServiceOne/resourceOne"),
                 Tag.of("http.method", "POST"),
                 Tag.of("error", "true")
-                           );
+        );
         testFunctionMetrics(metrics, fileName + ":24:24", 1,
                 Tag.of("src.client.remote", "true"),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName),
                 Tag.of("error", "true"),
                 Tag.of("src.object.name", MOCK_CLIENT_OBJECT_NAME),
-                Tag.of("src.function.name", "callWithPanic")
-                           );
+                Tag.of("src.function.name", "callWithPanic"),
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
+                Tag.of("entrypoint.function.name", "/resourceOne"),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("entrypoint.service.name", "/testServiceOne")
+        );
         testFunctionMetrics(metrics, fileName + ":29:20", 1,
                 Tag.of("src.client.remote", "true"),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName),
                 Tag.of("error", "true"),
                 Tag.of("src.object.name", MOCK_CLIENT_OBJECT_NAME),
-                Tag.of("src.function.name", "callWithErrorReturn")
-                           );
+                Tag.of("src.function.name", "callWithErrorReturn"),
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
+                Tag.of("entrypoint.function.name", "/resourceOne"),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("entrypoint.service.name", "/testServiceOne")
+        );
     }
 
-    @Test(enabled = true)
+    @Test
     public void testWorkers() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "testServiceOne";
         String resourceName = "resourceTwo";
 
-        HttpResponse httpResponse = HttpClientRequest.doPost(
-                "http://localhost:10091/" + serviceName + "/" + resourceName, "15", Collections.emptyMap());
+        HttpResponse httpResponse = HttpClientRequest.doPost("http://localhost:10091/" + serviceName +
+                PATH_SEPARATOR + resourceName, "15", Collections.emptyMap());
         Assert.assertEquals(httpResponse.getResponseCode(), 200);
         Assert.assertEquals(httpResponse.getData(), "Invocation Successful");
         Thread.sleep(1000);
@@ -396,52 +407,71 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         Metrics metrics = this.getMetrics();
         testFunctionMetrics(metrics, fileName + ":34:5", 1,
                 Tag.of("src.service.resource", "true"),
-                Tag.of("src.object.name", SERVER_CONNECTOR_NAME),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName),
+                Tag.of("src.object.name", "/testServiceOne"),
                 Tag.of("protocol", "http"),
                 Tag.of("http.url", "/testServiceOne/resourceTwo"),
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
+                Tag.of("src.resource.accessor", "post"),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("entrypoint.service.name", "/testServiceOne"),
+                Tag.of("entrypoint.function.name", "/resourceTwo"),
+                Tag.of("listener.name", "testobserve_listener"),
+                Tag.of("src.resource.path", "/resourceTwo"),
                 Tag.of("http.method", "POST")
-                           );
+        );
         testFunctionMetrics(metrics, fileName + ":66:15", 1,
                 Tag.of("src.worker", "true"),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName)
-                           );
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
+                Tag.of("src.function.name", "w1"),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("entrypoint.service.name", "/testServiceOne"),
+                Tag.of("entrypoint.function.name", "/resourceTwo")
+        );
         testFunctionMetrics(metrics, fileName + ":71:15", 1,
                 Tag.of("src.worker", "true"),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName)
-                           );
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
+                Tag.of("src.function.name", "w2"),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("entrypoint.service.name", "/testServiceOne"),
+                Tag.of("entrypoint.function.name", "/resourceTwo")
+        );
         testFunctionMetrics(metrics, fileName + ":36:20", 1,
                 Tag.of("src.client.remote", "true"),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName),
                 Tag.of("src.object.name", "ballerina/testobserve/Caller"),
-                Tag.of("src.function.name", "respond")
-                           );
+                Tag.of("src.function.name", "respond"),
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("entrypoint.service.name", "/testServiceOne"),
+                Tag.of("entrypoint.function.name", "/resourceTwo")
+        );
     }
 
-    @Test(enabled = true)
+    @Test
     public void testCustomMetricTags() throws Exception {
         String fileName = "03_custom_metric_tags.bal";
         String serviceName = "testServiceTwo";
         String resourceName = "testAddTagToMetrics";
 
-        HttpResponse httpResponse = HttpClientRequest.doPost(
-                "http://localhost:10092/" + serviceName + "/" + resourceName, "15", Collections.emptyMap());
+        HttpResponse httpResponse = HttpClientRequest.doPost("http://localhost:10092/" + serviceName +
+                PATH_SEPARATOR + resourceName, "15", Collections.emptyMap());
         Assert.assertEquals(httpResponse.getResponseCode(), 200);
         Assert.assertEquals(httpResponse.getData(), "Invocation Successful");
         Thread.sleep(1000);
 
         Tag[] startTags = {
                 Tag.of("src.service.resource", "true"),
-                Tag.of("src.object.name", SERVER_CONNECTOR_NAME),
-                Tag.of("service", serviceName),
-                Tag.of("resource", resourceName),
+                Tag.of("src.object.name", "/testServiceTwo"),
+                Tag.of("entrypoint.function.module", "intg_tests/metrics_tests:0.0.1"),
+                Tag.of("src.resource.accessor", "post"),
+                Tag.of("entrypoint.resource.accessor", "post"),
+                Tag.of("listener.name", "testobserve_listener"),
+                Tag.of("entrypoint.function.name", "/testAddTagToMetrics"),
+                Tag.of("entrypoint.service.name", "/testServiceTwo"),
+                Tag.of("src.resource.path", "/testAddTagToMetrics"),
                 Tag.of("protocol", "http"),
                 Tag.of("http.url", "/testServiceTwo/testAddTagToMetrics"),
-                Tag.of("http.method", "POST")};
+                Tag.of("http.method", "POST")
+        };
         Tag[] endTags = {Tag.of("metric", "Metric Value")};
 
         Metrics metrics = this.getMetrics();
