@@ -236,6 +236,7 @@ public class WebServer {
             observerContext.setObjectName("testobserve_listener");
             Map<String, String> httpHeaders = new HashMap<>();
             request.headers().forEach(entry -> httpHeaders.put(entry.getKey(), entry.getValue()));
+            // adding properties and tags to test runtime APIs
             observerContext.addProperty(PROPERTY_TRACE_PROPERTIES, httpHeaders);
             observerContext.addTag(TAG_KEY_HTTP_METHOD, request.method().name());
             observerContext.addTag(TAG_KEY_PROTOCOL, "http");
