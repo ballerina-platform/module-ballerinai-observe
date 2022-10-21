@@ -78,3 +78,9 @@ function testWorkerInteractions(int c) {
     wait w2;
     wait w1;
 }
+
+service /this\-is\-service\-path/still\-service\-path on new testobserve:Listener(10093) {
+    resource function post this\-is\-resource\-function/still\-resource\-function(testobserve:Caller caller) {
+        checkpanic caller->respond("Invocation Successful");
+    }
+}
