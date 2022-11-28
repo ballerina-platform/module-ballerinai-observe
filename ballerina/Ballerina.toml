@@ -1,7 +1,7 @@
 [package]
 org = "ballerinai"
 name = "observe"
-version = "1.0.4"
+version = "1.0.5"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/observe-internal-native-1.0.4.jar"
+path = "../native/build/libs/observe-internal-native-1.0.5-SNAPSHOT.jar"
