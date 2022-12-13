@@ -405,7 +405,6 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         );
     }
 
-    @Test(enabled = false)
     public void testPathsWithEscapeCharacters() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "/this\\-is\\-service\\-path/still\\-service\\-path";
