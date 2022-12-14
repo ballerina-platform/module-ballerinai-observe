@@ -20,6 +20,7 @@ package io.ballerina.stdlib.observability.metrics;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.ballerina.identifier.Utils;
 import io.ballerina.runtime.observability.metrics.PercentileValue;
 import io.ballerina.runtime.observability.metrics.Snapshot;
 import io.ballerina.runtime.observability.metrics.Tag;
@@ -78,7 +79,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void setup() throws Exception {
-        super.setupServer(TEST_SRC_PROJECT_NAME, TEST_SRC_PACKAGE_NAME, new int[]{10090, 10091, 10092});
+        super.setupServer(TEST_SRC_PROJECT_NAME, TEST_SRC_PACKAGE_NAME, new int[]{10090, 10091, 10092, 10093});
     }
 
     @AfterClass(alwaysRun = true)
@@ -401,6 +402,41 @@ public class MetricsTestCase extends ObservabilityBaseTest {
                 Tag.of(ENTRYPOINT_FUNCTION_NAME, resourceName),
                 Tag.of(ENTRYPOINT_RESOURCE_ACCESSOR, "post"),
                 Tag.of(ENTRYPOINT_SERVICE_NAME, serviceName)
+        );
+    }
+
+    @Test
+    public void testPathsWithEscapeCharacters() throws Exception {
+        String fileName = "02_resource_function.bal";
+        String serviceName = "/this\\-is\\-service\\-path/still\\-service\\-path";
+        String resourceName = "/this\\-is\\-resource\\-function/still\\-resource\\-function";
+        String serviceNameUnescaped = "/this-is-service-path/still-service-path";
+        String resourceNameUnescaped = "/this-is-resource-function/still-resource-function";
+        if (!serviceNameUnescaped.equals(Utils.unescapeBallerina(serviceNameUnescaped)) ||
+                !resourceNameUnescaped.equals(Utils.unescapeBallerina(resourceNameUnescaped))) {
+            throw new AssertionError("Unescaped path is not correct");
+        }
+
+        HttpResponse httpResponse = HttpClientRequest.doPost("http://localhost:10093" + serviceName +
+                resourceName, "15", Collections.emptyMap());
+        Assert.assertEquals(httpResponse.getResponseCode(), 200);
+        Assert.assertEquals(httpResponse.getData(), "Invocation Successful");
+        Thread.sleep(1000);
+
+        Metrics metrics = this.getMetrics();
+        testFunctionMetrics(metrics, fileName + ":83:5", 1,
+                Tag.of(SRC_SERVICE_RESOURCE, "true"),
+                Tag.of(SRC_OBJECT_NAME, serviceNameUnescaped),
+                Tag.of(PROTOCOL, "http"),
+                Tag.of(HTTP_URL, serviceName + resourceName),
+                Tag.of(ENTRYPOINT_FUNCTION_MODULE, MODULE_ID),
+                Tag.of(SRC_RESOURCE_ACCESSOR, "post"),
+                Tag.of(ENTRYPOINT_RESOURCE_ACCESSOR, "post"),
+                Tag.of(ENTRYPOINT_SERVICE_NAME, serviceNameUnescaped),
+                Tag.of(ENTRYPOINT_FUNCTION_NAME, resourceNameUnescaped),
+                Tag.of(LISTENER_NAME, "testobserve_listener"),
+                Tag.of(SRC_RESOURCE_PATH, resourceNameUnescaped),
+                Tag.of(HTTP_METHOD , "POST")
         );
     }
 
