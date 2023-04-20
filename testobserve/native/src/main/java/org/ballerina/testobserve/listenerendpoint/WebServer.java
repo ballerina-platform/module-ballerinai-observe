@@ -25,6 +25,7 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ResourceMethodType;
 import io.ballerina.runtime.api.types.ServiceType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.observability.ObservabilityConstants;
@@ -98,7 +99,7 @@ public class WebServer {
      * @param basePath The base path of the service
      */
     public void addService(BObject serviceObject, String basePath) {
-        ResourceMethodType[] resourceFunctions = ((ServiceType) serviceObject.getType()).getResourceMethods();
+        ResourceMethodType[] resourceFunctions = ((ServiceType) TypeUtils.getType(serviceObject)).getResourceMethods();
         for (ResourceMethodType resourceMethodType : resourceFunctions) {
             Resource resource = new Resource(serviceObject, resourceMethodType, basePath);
             String resourceMapKey = generateResourceMapKey(resource.getAccessor(), resource.getResourcePath());
