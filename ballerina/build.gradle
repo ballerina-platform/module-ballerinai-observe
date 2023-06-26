@@ -115,3 +115,4 @@ test.dependsOn ":observe-internal-native:build"
 
 publishToMavenLocal.dependsOn build
 publish.dependsOn build
+build.dependsOn(':observe-ballerina:generatePomFileForMavenPublication')

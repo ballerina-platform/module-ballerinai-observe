@@ -81,12 +81,12 @@ public class Resource {
         return this.resourceMethodType.getAccessor();
     }
 
-    public String getResourcePath() {
+    public final String getResourcePath() {
         return Utils.normalizeResourcePath(basePath)
                 + Utils.normalizeResourcePath(String.join("/", this.resourceMethodType.getResourcePath()));
     }
 
-    public Type[] getParamTypes() {
+    public final Type[] getParamTypes() {
         Parameter[] parameters = this.resourceMethodType.getParameters();
         Type[] types = new Type[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
