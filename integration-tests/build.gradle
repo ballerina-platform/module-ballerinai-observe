@@ -34,6 +34,8 @@ dependencies {
     testImplementation group: 'org.ballerinalang', name: 'ballerina-metrics-extension',
             version: "${ballerinaLangVersion}"
     implementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+    testImplementation "com.google.code.gson:gson:${gsonVersion}"
+    testImplementation group: 'org.ballerinalang', name: 'identifier-util', version: "${ballerinaLangVersion}"
 }
 
 def ballerinaDist = "build/target/extracted-distributions"
