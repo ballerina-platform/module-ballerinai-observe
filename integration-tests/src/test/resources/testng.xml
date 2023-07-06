@@ -25,14 +25,14 @@
     </groups>
     <test name="ballerina-observability-integration-tests" parallel="false">
         <classes>
-<!--            <class name="io.ballerina.stdlib.observability.metrics.MetricsTestCase"/>-->
-<!--            <class name="io.ballerina.stdlib.observability.tracing.ConcurrencyTestCase"/>-->
-<!--            <class name="io.ballerina.stdlib.observability.tracing.CustomTracingTestCase"/>-->
-<!--            <class name="io.ballerina.stdlib.observability.tracing.MainFunctionTestCase"/>-->
-<!--            <class name="io.ballerina.stdlib.observability.tracing.ObservableAnnotationTestCase"/>-->
-<!--            <class name="io.ballerina.stdlib.observability.tracing.RemoteCallTestCase"/>-->
-<!--            <class name="io.ballerina.stdlib.observability.tracing.SpanContextTestCase"/>-->
-<!--            <class name="io.ballerina.stdlib.observability.tracing.ResourceFunctionTestCase"/>-->
+            <class name="io.ballerina.stdlib.observability.metrics.MetricsTestCase"/>
+            <class name="io.ballerina.stdlib.observability.tracing.ConcurrencyTestCase"/>
+            <class name="io.ballerina.stdlib.observability.tracing.CustomTracingTestCase"/>
+            <class name="io.ballerina.stdlib.observability.tracing.MainFunctionTestCase"/>
+            <class name="io.ballerina.stdlib.observability.tracing.ObservableAnnotationTestCase"/>
+            <class name="io.ballerina.stdlib.observability.tracing.RemoteCallTestCase"/>
+            <class name="io.ballerina.stdlib.observability.tracing.SpanContextTestCase"/>
+            <class name="io.ballerina.stdlib.observability.tracing.ResourceFunctionTestCase"/>
         </classes>
     </test>
 </suite>

@@ -60,9 +60,13 @@ public class ListenerEndpointTest {
         String sourcesDir = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator +
                 "listener_tests").getAbsolutePath();
         int[] requiredPorts = {29091};
-        servicesServerInstance.startServer(sourcesDir, "listener_tests", null, new String[0], requiredPorts);
-        InetAddress address = InetAddress.getByName("localhost");
-        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, address);
+        try {
+            servicesServerInstance.startServer(sourcesDir, "listener_tests", null, new String[0], requiredPorts);
+            Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw t;
+        }
     }
 
     @AfterClass
