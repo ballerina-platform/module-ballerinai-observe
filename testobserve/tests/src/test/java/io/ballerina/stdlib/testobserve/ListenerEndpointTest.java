@@ -62,7 +62,8 @@ public class ListenerEndpointTest {
         int[] requiredPorts = {29091};
         try {
             servicesServerInstance.startServer(sourcesDir, "listener_tests", null, new String[0], requiredPorts);
-            Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
+            InetAddress address = InetAddress.getByName("localhost");
+            Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, address);
         } catch (Throwable t) {
             t.printStackTrace();
             throw t;
