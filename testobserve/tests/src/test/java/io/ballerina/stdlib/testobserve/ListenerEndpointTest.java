@@ -36,8 +36,6 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.logging.Logger;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 /**
  * Test cases for listener written to be used in unit tests.
  */
@@ -60,14 +58,8 @@ public class ListenerEndpointTest {
         String sourcesDir = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator +
                 "listener_tests").getAbsolutePath();
         int[] requiredPorts = {29091};
-        try {
-            servicesServerInstance.startServer(sourcesDir, "listener_tests", null, new String[0], requiredPorts);
-            InetAddress address = InetAddress.getByName("localhost");
-            Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, address);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw t;
-        }
+        servicesServerInstance.startServer(sourcesDir, "listener_tests", null, new String[0], requiredPorts);
+        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, InetAddress.getLocalHost());
     }
 
     @AfterClass

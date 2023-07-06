@@ -59,8 +59,7 @@ public class ObservabilityBaseTest extends BaseTest {
         // Don't use 9898 port here. It is used in metrics test cases.
         servicesServerInstance = new BServerInstance(balServer);
         servicesServerInstance.startServer(sourcesDir, packageName, null, null, env, requiredPorts);
-        InetAddress address = InetAddress.getByName("localhost");
-        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, address);
+        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, InetAddress.getLocalHost());
     }
 
     protected void cleanupServer() throws BallerinaTestException, IOException {
