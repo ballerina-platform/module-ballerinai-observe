@@ -59,7 +59,7 @@ public class ListenerEndpointTest {
                 "listener_tests").getAbsolutePath();
         int[] requiredPorts = {29091};
         servicesServerInstance.startServer(sourcesDir, "listener_tests", null, new String[0], requiredPorts);
-        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
+        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, InetAddress.getByName("localhost"));
     }
 
     @AfterClass
