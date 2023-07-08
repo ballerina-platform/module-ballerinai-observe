@@ -138,6 +138,7 @@ jacocoTestReport {
 }
 
 test {
+    jvmArgs = ['--add-opens=java.base/java.time=ALL-UNNAMED']
     dependsOn createServerZip
     finalizedBy jacocoTestReport
     useTestNG() {

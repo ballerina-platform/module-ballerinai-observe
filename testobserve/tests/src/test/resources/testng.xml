@@ -19,7 +19,7 @@
 <suite name="Observe Integration Test Utils Test-Suite">
     <test name="test-observe tests" parallel="false">
         <classes>
-<!--            <class name="io.ballerina.stdlib.testobserve.ListenerEndpointTest"/>-->
+            <class name="io.ballerina.stdlib.testobserve.ListenerEndpointTest"/>
         </classes>
     </test>
 </suite>
