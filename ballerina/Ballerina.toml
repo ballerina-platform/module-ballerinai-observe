@@ -8,4 +8,4 @@ distribution = "2201.7.0"
 graalvmCompatible = true
 
 [[platform.java17.dependency]]
-path = "../native/build/libs/observe-internal-native-1.1.0-SNAPSHOT.jar"
+path = "../native/build/libs/observe-internal-native-1.1.0.jar"
