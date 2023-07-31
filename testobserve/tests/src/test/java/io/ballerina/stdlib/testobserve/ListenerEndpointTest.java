@@ -29,13 +29,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.logging.Logger;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Test cases for listener written to be used in unit tests.
@@ -60,7 +59,7 @@ public class ListenerEndpointTest {
                 "listener_tests").getAbsolutePath();
         int[] requiredPorts = {29091};
         servicesServerInstance.startServer(sourcesDir, "listener_tests", null, new String[0], requiredPorts);
-        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
+        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, InetAddress.getByName("localhost"));
     }
 
     @AfterClass

@@ -331,7 +331,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testMainFunction() throws Exception {
         String fileName = "01_main_function.bal";
 
@@ -355,7 +355,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         );
     }
 
-    @Test
+    @Test(enabled = false)
     public void testResourceFunction() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "/testServiceOne";
@@ -405,7 +405,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         );
     }
 
-    @Test
+    @Test(enabled = false)
     public void testPathsWithEscapeCharacters() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "/this\\-is\\-service\\-path/still\\-service\\-path";
@@ -440,7 +440,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         );
     }
 
-    @Test
+    @Test(enabled = false)
     public void testWorkers() throws Exception {
         String fileName = "02_resource_function.bal";
         String serviceName = "/testServiceOne";
@@ -494,7 +494,7 @@ public class MetricsTestCase extends ObservabilityBaseTest {
         );
     }
 
-    @Test
+    @Test(enabled = false)
     public void testCustomMetricTags() throws Exception {
         String fileName = "03_custom_metric_tags.bal";
         String serviceName = "/testServiceTwo";

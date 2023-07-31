@@ -3,5 +3,5 @@ org = "ballerina"
 name = "testobserve"
 version = "0.0.0"
 
-[[platform.java11.dependency]]
+[[platform.java17.dependency]]
 path = "../native/build/libs/testobserve-native-@project.version@-all.jar"
