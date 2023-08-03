@@ -24,6 +24,7 @@ import org.ballerinalang.test.context.BallerinaTestException;
 import org.ballerinalang.test.context.Utils;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,7 +59,7 @@ public class ObservabilityBaseTest extends BaseTest {
         // Don't use 9898 port here. It is used in metrics test cases.
         servicesServerInstance = new BServerInstance(balServer);
         servicesServerInstance.startServer(sourcesDir, packageName, null, null, env, requiredPorts);
-        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, "localhost");
+        Utils.waitForPortsToOpen(requiredPorts, 1000 * 60, false, InetAddress.getByName("localhost"));
     }
 
     protected void cleanupServer() throws BallerinaTestException, IOException {
