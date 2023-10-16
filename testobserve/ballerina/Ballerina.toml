@@ -4,4 +4,4 @@ name = "testobserve"
 version = "0.0.0"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/testobserve-native-1.0.6-SNAPSHOT-all.jar"
+path = "../native/build/libs/testobserve-native-1.0.7-SNAPSHOT-all.jar"
