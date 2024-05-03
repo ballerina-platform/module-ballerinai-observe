@@ -44,3 +44,4 @@ target/
 # Ballerina related ignores
 Ballerina.lock
 velocity.log*
+**/Dependencies.toml
