@@ -4,8 +4,8 @@ name = "observe"
 version = "@toml.version@"
 distribution = "2201.10.0"
 
-[platform.java17]
+[platform.java21]
 graalvmCompatible = true
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 path = "../native/build/libs/observe-internal-native-@project.version@.jar"
