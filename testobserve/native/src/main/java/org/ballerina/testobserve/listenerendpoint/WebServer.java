@@ -18,10 +18,11 @@
 
 package org.ballerina.testobserve.listenerendpoint;
 
-import io.ballerina.runtime.api.Runtime;
-import io.ballerina.runtime.api.async.Callback;
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.async.StrandMetadata;
+import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.ObjectType;
 import io.ballerina.runtime.api.types.ResourceMethodType;
 import io.ballerina.runtime.api.types.ServiceType;
 import io.ballerina.runtime.api.utils.StringUtils;
@@ -84,12 +85,12 @@ public class WebServer {
     private final Map<String, Resource> resourceMap = new ConcurrentHashMap<>();
     private final int port;
     private final EventLoopGroup loopGroup;
-    private final Runtime runtime;
+    private final Environment env;
 
-    public WebServer(int port, Runtime runtime) {
+    public WebServer(int port, Environment env) {
         this.port = port;
         this.loopGroup = new NioEventLoopGroup();
-        this.runtime = runtime;
+        this.env = env;
     }
 
     /**
@@ -148,7 +149,7 @@ public class WebServer {
                             pipeline.addLast("decoder", new HttpRequestDecoder(4096, 8192, 8192, false));
                             pipeline.addLast("aggregator", new HttpObjectAggregator(100 * 1024 * 1024));
                             pipeline.addLast("encoder", new HttpResponseEncoder());
-                            pipeline.addLast("handler", new WebServerInboundHandler(runtime, resourceMap));
+                            pipeline.addLast("handler", new WebServerInboundHandler(env, resourceMap));
                         }
                     })
                     .bind(this.port)
@@ -187,11 +188,11 @@ public class WebServer {
      * Inbound message handler of the Web Server.
      */
     public static class WebServerInboundHandler extends SimpleChannelInboundHandler<Object> {
-        private final Runtime runtime;
+        private final Environment env;
         private final Map<String, Resource> resourceMap;
 
-        public WebServerInboundHandler(Runtime runtime, Map<String, Resource> resourceMap) {
-            this.runtime = runtime;
+        public WebServerInboundHandler(Environment env, Map<String, Resource> resourceMap) {
+            this.env = env;
             this.resourceMap = resourceMap;
         }
 
@@ -202,10 +203,9 @@ public class WebServer {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, Object o) {
-            if (!(o instanceof FullHttpRequest)) {
+            if (!(o instanceof FullHttpRequest request)) {
                 return;
             }
-            final FullHttpRequest request = (FullHttpRequest) o;
             String httpMethod = request.method().name();
             String resourcePath = Utils.normalizeResourcePath(request.uri());
             String resourceMapKey = generateResourceMapKey(httpMethod, resourcePath);
@@ -222,15 +222,13 @@ public class WebServer {
             BObject serviceObject = resource.getServiceObject();
             String resourceFunctionName = resource.getResourceFunctionName();
             int paramCount = resource.getParamTypes().length;
-            Object[] args = new Object[paramCount * 2];
+            Object[] args = new Object[paramCount];
             if (paramCount >= 1) {
                 args[0] = callerObject;
-                args[1] = true;
             }
             if (paramCount >= 2 && request.method() == HttpMethod.POST) {
                 String bodyContent = request.content().toString(StandardCharsets.UTF_8);
-                args[2] = StringUtils.fromString(bodyContent);
-                args[3] = true;
+                args[1] = StringUtils.fromString(bodyContent);
             }
 
             ObserverContext observerContext = new ObserverContext();
@@ -250,8 +248,23 @@ public class WebServer {
                     TEST_OBSERVE_PACKAGE.getName(), TEST_OBSERVE_PACKAGE.getMajorVersion(),
                     resourceFunctionName);
             Utils.logInfo("Dispatching resource " + resourcePath);
-            runtime.invokeMethodAsync(serviceObject, resourceFunctionName, null, strandMetadata,
-                    new WebServerCallableUnitCallback(ctx, resourcePath), properties, resource.getReturnType(), args);
+            ObjectType objectType = (ObjectType) serviceObject.getOriginalType();
+            Object result;
+
+            try {
+                if (objectType.isIsolated() && objectType.isIsolated(resourceFunctionName)) {
+                    result = env.getRuntime().startIsolatedWorker(serviceObject, resourceFunctionName, null,
+                            strandMetadata, properties, args).get();
+                } else {
+                    result = env.getRuntime().startNonIsolatedWorker(serviceObject, resourceFunctionName, null,
+                            strandMetadata, properties, args).get();
+                }
+                handleResult(ctx, result, resourcePath);
+            } catch (BError error) {
+                handleError(ctx, error, resourcePath);
+            } catch (Throwable cause) {
+                handleError(ctx, ErrorCreator.createError(cause), resourcePath);
+            }
         }
 
         @Override
@@ -261,33 +274,17 @@ public class WebServer {
             ctx.close();
         }
 
-        /**
-         * Callable unit used in executing ballerina resource function.
-         */
-        public static class WebServerCallableUnitCallback implements Callback {
-            private final ChannelHandlerContext ctx;
-            private final String resourceName;
-
-            public WebServerCallableUnitCallback(ChannelHandlerContext ctx, String resourcePath) {
-                this.ctx = ctx;
-                this.resourceName = resourcePath;
+        private void handleResult(ChannelHandlerContext ctx, Object result, String resourcePath) {
+            if (result instanceof BError error) {
+                handleError(ctx, error, resourcePath);
+            } else {
+                Utils.logInfo("Successfully executed resource " + resourcePath);
             }
+        }
 
-            @Override
-            public void notifySuccess(Object result) {
-                if (result instanceof BError) {
-                    notifyFailure(((BError) result));
-                } else {
-                    Utils.logInfo("Successfully executed resource " + this.resourceName);
-                }
-            }
-
-            @Override
-            public void notifyFailure(BError error) {
-                writeResponse(this.ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, error.getMessage());
-                Utils.logError("Failed to execute resource " + this.resourceName + " "
-                        + error.getPrintableStackTrace());
-            }
+        private void handleError(ChannelHandlerContext ctx, BError error, String resourcePath) {
+            writeResponse(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, error.getMessage());
+            Utils.logError("Failed to execute resource " + resourcePath + " " + error.getPrintableStackTrace());
         }
     }
 
