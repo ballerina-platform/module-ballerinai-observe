@@ -37,6 +37,7 @@ public class NativeUtils {
         env.yieldAndRun(() -> {
             try {
                 Thread.sleep(delayMillis);
+                return null;
             } catch (InterruptedException e) {
                 throw ErrorCreator.createError(StringUtils.fromString("error occurred during sleep"), e);
             }
