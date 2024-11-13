@@ -19,7 +19,7 @@
 package org.ballerina.testobserve.listenerendpoint;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.async.StrandMetadata;
+import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ObjectType;
@@ -243,22 +243,12 @@ public class WebServer {
 
             Map<String, Object> properties = new HashMap<>();
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, observerContext);
-
-            StrandMetadata strandMetadata = new StrandMetadata(TEST_OBSERVE_PACKAGE.getOrg(),
-                    TEST_OBSERVE_PACKAGE.getName(), TEST_OBSERVE_PACKAGE.getMajorVersion(),
-                    resourceFunctionName);
             Utils.logInfo("Dispatching resource " + resourcePath);
             ObjectType objectType = (ObjectType) serviceObject.getOriginalType();
-            Object result;
-
             try {
-                if (objectType.isIsolated() && objectType.isIsolated(resourceFunctionName)) {
-                    result = env.getRuntime().startIsolatedWorker(serviceObject, resourceFunctionName, null,
-                            strandMetadata, properties, args).get();
-                } else {
-                    result = env.getRuntime().startNonIsolatedWorker(serviceObject, resourceFunctionName, null,
-                            strandMetadata, properties, args).get();
-                }
+                boolean isConcurrentSafe = objectType.isIsolated() && objectType.isIsolated(resourceFunctionName);
+                StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, properties);
+                Object result = env.getRuntime().callMethod(serviceObject, resourceFunctionName, metadata, args);
                 handleResult(ctx, result, resourcePath);
             } catch (BError error) {
                 handleError(ctx, error, resourcePath);
