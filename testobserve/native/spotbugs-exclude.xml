@@ -18,12 +18,26 @@
 <FindBugsFilter>
     <Match>
         <Class name="org.ballerina.testobserve.listenerendpoint.Resource"/>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+    <Match>
+        <Class name="org.ballerina.testobserve.listenerendpoint.Resource"/>
         <Field name="serviceObject"/>
-        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2, CT_CONSTRUCTOR_THROW"/>
+    </Match>
+    <Match>
+        <Class name="org.ballerina.testobserve.listenerendpoint.WebServer"/>
+        <Field name="env"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
     <Match>
         <Class name="org.ballerina.testobserve.listenerendpoint.WebServer$WebServerInboundHandler"/>
         <Field name="resourceMap"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="org.ballerina.testobserve.listenerendpoint.WebServer$WebServerInboundHandler"/>
+        <Field name="env"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
 </FindBugsFilter>

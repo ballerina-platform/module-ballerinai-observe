@@ -19,11 +19,11 @@
 package org.ballerina.testobserve;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Future;
+import io.ballerina.runtime.api.creators.ErrorCreator;
+import io.ballerina.runtime.api.utils.StringUtils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Native functions for the utilities in testobserve module.
@@ -34,7 +34,13 @@ public class NativeUtils {
     private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(CORE_THREAD_POOL_SIZE);
 
     public static void sleep(Environment env, long delayMillis) {
-        Future balFuture = env.markAsync();
-        executor.schedule(() -> balFuture.complete(null), delayMillis, TimeUnit.MILLISECONDS);
+        env.yieldAndRun(() -> {
+            try {
+                Thread.sleep(delayMillis);
+                return null;
+            } catch (InterruptedException e) {
+                throw ErrorCreator.createError(StringUtils.fromString("error occurred during sleep"), e);
+            }
+        });
     }
 }
