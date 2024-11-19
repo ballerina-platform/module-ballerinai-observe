@@ -17,9 +17,11 @@
  */
 package io.ballerina.stdlib.observe.internal;
 
+import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.observability.ObserveUtils;
+import io.ballerina.runtime.observability.metrics.BallerinaMetricsLogsObserver;
 import io.ballerina.runtime.observability.metrics.BallerinaMetricsObserver;
 import io.ballerina.runtime.observability.metrics.DefaultMetricRegistry;
 import io.ballerina.runtime.observability.metrics.MetricRegistry;
@@ -88,6 +90,15 @@ public class NativeFunctions {
             selectedProvider.init();
             TracersStore.getInstance().setTracerGenerator(selectedProvider);
             ObserveUtils.addObserver(new BallerinaTracingObserver());
+            return null;
+        } catch (BError e) {
+            return e;
+        }
+    }
+
+    public static BError enableMetricsLogging(Environment env, BString providerName) {
+        try {
+            ObserveUtils.addObserver(new BallerinaMetricsLogsObserver(env));
             return null;
         } catch (BError e) {
             return e;
