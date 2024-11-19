@@ -33,7 +33,7 @@ function init() {
     }
 
     if (observe:isMetricsLogsEnabled()) {
-        var err = externEnableMetricsLogging(observe:getTracingProvider());
+        var err = externEnableMetricsLogging(observe:getMetricsLogsProvider());
         if (err is error) {
             externPrintError("failed to enable tracing");
         }
