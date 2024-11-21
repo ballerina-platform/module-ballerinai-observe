@@ -38,6 +38,7 @@ import static io.ballerina.runtime.observability.ObservabilityConstants.*;
 
 public class BallerinaMetricsLogsObserver implements BallerinaObserver {
     private static final String ORG_NAME = "ballerinax";
+    private static final String METRIC_LOG_FUNCTION_NAME = "printMetricsLog";
     private static final String PROPERTY_START_TIME = "_observation_start_time_";
     private static final PrintStream consoleError = System.err;
 
@@ -121,6 +122,6 @@ public class BallerinaMetricsLogsObserver implements BallerinaObserver {
     private static void printMetricLog(BMap<BString, Object> logAttributes) {
         // TODO: Remove version when the API is finalized, and add the configured org name.
         Module metricsLogsModule = new Module(ORG_NAME, ObserveUtils.getMetricsLogsProvider().getValue(), "1");
-        environment.getRuntime().callFunction(metricsLogsModule, "printMetricsLog", null, logAttributes);
+        environment.getRuntime().callFunction(metricsLogsModule, METRIC_LOG_FUNCTION_NAME, null, logAttributes);
     }
 }
