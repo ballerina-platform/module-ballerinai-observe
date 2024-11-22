@@ -19,7 +19,12 @@ package io.ballerina.stdlib.observe.observers;
 
 import io.ballerina.runtime.observability.BallerinaObserver;
 import io.ballerina.runtime.observability.ObserverContext;
-import io.ballerina.runtime.observability.metrics.*;
+import io.ballerina.runtime.observability.metrics.DefaultMetricRegistry;
+import io.ballerina.runtime.observability.metrics.Gauge;
+import io.ballerina.runtime.observability.metrics.MetricId;
+import io.ballerina.runtime.observability.metrics.MetricRegistry;
+import io.ballerina.runtime.observability.metrics.StatisticConfig;
+import io.ballerina.runtime.observability.metrics.Tag;
 
 import java.io.PrintStream;
 import java.time.Duration;
@@ -27,7 +32,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static io.ballerina.runtime.observability.ObservabilityConstants.*;
+import static io.ballerina.runtime.observability.ObservabilityConstants.PROPERTY_KEY_HTTP_STATUS_CODE;
+import static io.ballerina.runtime.observability.ObservabilityConstants.STATUS_CODE_GROUP_SUFFIX;
+import static io.ballerina.runtime.observability.ObservabilityConstants.TAG_KEY_HTTP_STATUS_CODE_GROUP;
 
 /**
  * Observe the runtime and collect measurements.
