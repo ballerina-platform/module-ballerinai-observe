@@ -96,7 +96,7 @@ public class NativeFunctions {
         }
     }
 
-    public static BError enableMetricsLogging(Environment env, BString providerName) {
+    public static BError enableMetricsLogging(Environment env) {
         try {
             ObserveUtils.addObserver(new BallerinaMetricsLogsObserver(env));
             return null;

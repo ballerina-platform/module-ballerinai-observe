@@ -33,7 +33,7 @@ function init() {
     }
 
     if (observe:isMetricsLogsEnabled()) {
-        var err = externEnableMetricsLogging(observe:getMetricsLogsProvider());
+        var err = externEnableMetricsLogging();
         if (err is error) {
             externPrintError("failed to enable tracing");
         }
@@ -50,7 +50,7 @@ function externEnableTracing(string provider) returns error? = @java:Method {
     name: "enableTracing"
 } external;
 
-function externEnableMetricsLogging(string provider) returns error? = @java:Method {
+function externEnableMetricsLogging() returns error? = @java:Method {
     'class: "io.ballerina.stdlib.observe.internal.NativeFunctions",
     name: "enableMetricsLogging"
 } external;
