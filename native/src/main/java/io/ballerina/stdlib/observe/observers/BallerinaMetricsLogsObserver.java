@@ -52,10 +52,12 @@ public class BallerinaMetricsLogsObserver implements BallerinaObserver {
 
     @Override
     public void startServerObservation(ObserverContext observerContext) {
+        startObservation(observerContext);
     }
 
     @Override
     public void startClientObservation(ObserverContext observerContext) {
+        startObservation(observerContext);
     }
 
     @Override
@@ -74,6 +76,12 @@ public class BallerinaMetricsLogsObserver implements BallerinaObserver {
             return;
         }
         stopObservation(observerContext);
+    }
+
+    private void startObservation(ObserverContext observerContext) {
+        if (observerContext.getProperty(PROPERTY_START_TIME) == null) {
+            observerContext.addProperty(PROPERTY_START_TIME, System.nanoTime());
+        }
     }
 
     private void stopObservation(ObserverContext observerContext) {
@@ -117,7 +125,7 @@ public class BallerinaMetricsLogsObserver implements BallerinaObserver {
 
     private void handleError(String metricName, Set<Tag> tags, RuntimeException e) {
         // Metric Provider may throw exceptions if there is a mismatch in tags.
-        consoleError.println("error: error collecting metrics for " + metricName + " with tags " + tags +
+        consoleError.println("error: error collecting metric logs for " + metricName + " with tags " + tags +
                 ": " + e.getMessage());
     }
 
