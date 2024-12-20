@@ -245,16 +245,18 @@ public class WebServer {
             properties.put(ObservabilityConstants.KEY_OBSERVER_CONTEXT, observerContext);
             Utils.logInfo("Dispatching resource " + resourcePath);
             ObjectType objectType = (ObjectType) serviceObject.getOriginalType();
-            try {
-                boolean isConcurrentSafe = objectType.isIsolated() && objectType.isIsolated(resourceFunctionName);
-                StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, properties);
-                Object result = env.getRuntime().callMethod(serviceObject, resourceFunctionName, metadata, args);
-                handleResult(ctx, result, resourcePath);
-            } catch (BError error) {
-                handleError(ctx, error, resourcePath);
-            } catch (Throwable cause) {
-                handleError(ctx, ErrorCreator.createError(cause), resourcePath);
-            }
+            Thread.startVirtualThread(() -> {
+                try {
+                    boolean isConcurrentSafe = objectType.isIsolated() && objectType.isIsolated(resourceFunctionName);
+                    StrandMetadata metadata = new StrandMetadata(isConcurrentSafe, properties);
+                    Object result = env.getRuntime().callMethod(serviceObject, resourceFunctionName, metadata, args);
+                    handleResult(ctx, result, resourcePath);
+                } catch (BError error) {
+                    handleError(ctx, error, resourcePath);
+                } catch (Throwable cause) {
+                    handleError(ctx, ErrorCreator.createError(cause), resourcePath);
+                }
+            });
         }
 
         @Override
