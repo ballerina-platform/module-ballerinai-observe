@@ -93,3 +93,5 @@ test {
     }
 }
 
+test.dependsOn ':testobserve-ballerina:build'
+test.dependsOn ":testobserve-native:build"
