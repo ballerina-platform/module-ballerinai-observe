@@ -93,4 +93,5 @@ task commitTomlFiles {
 
 updateTomlFiles.dependsOn copyStdlibs
 
-build.dependsOn ':testobserve-native:build'
+build.dependsOn(":testobserve-native:build")
+test.dependsOn(":testobserve-native:build")
