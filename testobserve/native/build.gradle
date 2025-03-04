@@ -33,7 +33,7 @@ dependencies {
     shadow "org.ballerinalang:annotations:${ballerinaLangVersion}"
 
     checkstyle project(':checkstyle')
-    checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
+    checkstyle "com.puppycrawl.tools:checkstyle:${checkstylePluginVersion}"
 
     implementation group: 'io.netty', name: 'netty-codec-http', version: "${nettyCodecVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
