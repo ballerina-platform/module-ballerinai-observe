@@ -2,7 +2,7 @@
 org = "ballerinai"
 name = "observe"
 version = "1.7.0"
-distribution = "2201.13.0"
+distribution = "2201.13.2"
 
 [platform.java21]
 graalvmCompatible = true
