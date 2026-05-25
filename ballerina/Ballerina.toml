@@ -1,11 +1,11 @@
 [package]
 org = "ballerinai"
 name = "observe"
-version = "1.7.1"
-distribution = "2201.13.2"
+version = "1.7.2"
+distribution = "2201.14.0-SNAPSHOT"
 
-[platform.java21]
+[platform.java25]
 graalvmCompatible = true
 
-[[platform.java21.dependency]]
-path = "../native/build/libs/observe-internal-native-1.7.1.jar"
+[[platform.java25.dependency]]
+path = "../native/build/libs/observe-internal-native-1.7.2-SNAPSHOT.jar"

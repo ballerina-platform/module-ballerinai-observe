@@ -52,7 +52,7 @@ task unpackStdLibs {
         project.configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
             project.copy {
                 from project.zipTree(artifact.getFile())
-                into new File("${project.buildDir}/target/extracted-distributions", artifact.name + '-zip')
+                into layout.buildDirectory.dir("target/extracted-distributions/${artifact.name}-zip").get().asFile
             }
         }
     }
@@ -64,7 +64,7 @@ task copyStdlibs {
     doLast {
         /* Standard Libraries */
         project.configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-            def artifactExtractedPath = "${project.buildDir}/target/extracted-distributions/" + artifact.name + '-zip'
+            def artifactExtractedPath = layout.buildDirectory.dir("target/extracted-distributions/${artifact.name}-zip").get().asFile.absolutePath
             project.copy {
                 def destination = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${project.ballerinaLangVersion}"
                 into destination
@@ -102,8 +102,8 @@ task createServerZip(type: Zip) {
     dependsOn copyObserveStdlib
 
     archiveFileName = "jballerina-tools-${ballerinaLangVersion}.zip"
-    destinationDirectory = file("${buildDir}/repacked-distributions")
-    from "${project.buildDir}/target/extracted-distributions/jballerina-tools-zip/"
+    destinationDirectory = layout.buildDirectory.dir("repacked-distributions")
+    from layout.buildDirectory.dir("target/extracted-distributions/jballerina-tools-zip")
 }
 
 def classFilesArray = []
@@ -145,11 +145,11 @@ test {
         suites 'src/test/resources/testng.xml'
     }
     systemProperty 'enableJBallerinaTests', 'true'
-    systemProperty 'basedir', "$buildDir"
-    systemProperty 'libdir', "$buildDir"
+    systemProperty 'basedir', layout.buildDirectory.get().asFile
+    systemProperty 'libdir', layout.buildDirectory.get().asFile
     systemProperty 'server.zip', createServerZip.outputs.files.singleFile
     systemProperty 'jballerina.server.zip', createServerZip.outputs.files.singleFile
-    systemProperty 'java.util.logging.config.file', "$buildDir/resources/test/logging.properties"
+    systemProperty 'java.util.logging.config.file', layout.buildDirectory.file("resources/test/logging.properties").get().asFile
     systemProperty 'ballerina.agent.path', configurations.testUtils.asPath
     systemProperty 'ballerina.agent.port.start.value', 27000
 
