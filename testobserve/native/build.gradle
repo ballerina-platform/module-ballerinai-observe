@@ -20,7 +20,7 @@ plugins {
     id 'checkstyle'
     id 'com.github.spotbugs'
     id 'jacoco'
-    id 'com.github.johnrengelman.shadow'
+    id 'com.gradleup.shadow'
 }
 
 description = 'Ballerina - Observability integration test utils natives'
@@ -60,10 +60,10 @@ spotbugsMain {
     def SpotBugsEffort = classLoader.findLoadedClass("com.github.spotbugs.snom.Effort")
     effort = SpotBugsEffort.MAX
     reportLevel = SpotBugsConfidence.LOW
-    reportsDir = file("$project.buildDir/reports/spotbugs")
+    reportsDir = layout.buildDirectory.dir("reports/spotbugs").get().asFile
     reports {
-        html.enabled true
-        text.enabled = true
+        html.required = true
+        text.required = true
     }
     def excludeFile = file('spotbugs-exclude.xml')
     if (excludeFile.exists()) {

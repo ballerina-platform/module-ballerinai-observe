@@ -4,4 +4,22 @@
         <Class name="io.ballerina.stdlib.observe.observers.BallerinaMetricsLogsObserver"/>
         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
     </Match>
+
+    <!-- Pre-existing issues surfaced by SpotBugs 4.9.x (bundled in plugin >= 6.2.0) -->
+    <Match>
+        <Package name="~io\.ballerina\.stdlib\.observe.*"/>
+        <BugCode name="THROWS"/>
+    </Match>
+    <Match>
+        <Package name="~io\.ballerina\.stdlib\.observe.*"/>
+        <BugCode name="AT"/>
+    </Match>
+    <Match>
+        <Package name="~io\.ballerina\.stdlib\.observe.*"/>
+        <BugCode name="USELESS_STRING"/>
+    </Match>
+    <Match>
+        <Package name="~io\.ballerina\.stdlib\.observe.*"/>
+        <BugCode name="DM"/>
+    </Match>
 </FindBugsFilter>
