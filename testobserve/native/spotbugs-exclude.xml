@@ -40,4 +40,22 @@
         <Field name="env"/>
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
+
+    <!-- Pre-existing issues surfaced by SpotBugs 4.9.x (bundled in plugin >= 6.2.0) -->
+    <Match>
+        <Package name="~org\.ballerina\.testobserve.*"/>
+        <BugCode name="THROWS"/>
+    </Match>
+    <Match>
+        <Package name="~org\.ballerina\.testobserve.*"/>
+        <BugCode name="AT"/>
+    </Match>
+    <Match>
+        <Package name="~org\.ballerina\.testobserve.*"/>
+        <BugCode name="USELESS_STRING"/>
+    </Match>
+    <Match>
+        <Package name="~org\.ballerina\.testobserve.*"/>
+        <BugCode name="DM"/>
+    </Match>
 </FindBugsFilter>
