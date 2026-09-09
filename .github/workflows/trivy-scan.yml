@@ -21,6 +21,7 @@ jobs:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew build -x check -x test --stacktrace --console=plain
+
 # Disabled since we are not using any external libraries
 #      - name: Run Trivy vulnerability scanner
 #        uses: aquasecurity/trivy-action@master
