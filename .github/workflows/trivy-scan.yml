@@ -6,27 +6,8 @@ on:
     - cron:  '0 0 * * *'
 
 jobs:
-  ubuntu-build:
-    name: Build on Ubuntu
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: 21
-      - name: Build with Gradle
-        env:
-          packageUser: ${{ github.actor }}
-          packagePAT: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew build -x check -x test --stacktrace --console=plain
-
-# Disabled since we are not using any external libraries
-#      - name: Run Trivy vulnerability scanner
-#        uses: aquasecurity/trivy-action@master
-#        with:
-#          scan-type: 'fs'
-#          scan-ref: '/github/workspace/ballerina/lib'
-#          format: 'table'
-#          exit-code: '1'
+  call_workflow:
+    name: Run Trivy Scan Workflow
+    if: ${{ github.repository_owner == 'ballerina-platform' }}
+    uses: ballerina-platform/ballerina-library/.github/workflows/trivy-scan-template.yml@main
+    secrets: inherit
