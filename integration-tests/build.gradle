@@ -102,7 +102,7 @@ task createServerZip(type: Zip) {
     dependsOn copyObserveStdlib
 
     archiveFileName = "jballerina-tools-${ballerinaLangVersion}.zip"
-    destinationDirectory = file("${buildDir}/repacked-distributions")
+    destinationDirectory = layout.buildDirectory.dir("repacked-distributions").get().asFile
     from "${project.buildDir}/target/extracted-distributions/jballerina-tools-zip/"
 }
 
