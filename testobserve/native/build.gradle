@@ -20,7 +20,7 @@ plugins {
     id 'checkstyle'
     id 'com.github.spotbugs'
     id 'jacoco'
-    id 'com.github.johnrengelman.shadow'
+    id 'com.gradleup.shadow'
 }
 
 description = 'Ballerina - Observability integration test utils natives'
