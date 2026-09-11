@@ -1,61 +1,10 @@
-name: Ballerina Observe Internal module build
+name: PR Build
 
 on: [pull_request]
 
 jobs:
-  ubuntu-build:
-    name: Build on Ubuntu
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: 21
-      - name: Build with Gradle
-        env:
-          packageUser: ${{ github.actor }}
-          packagePAT: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-            ./gradlew build test --stacktrace --console=plain
-      - name: Generate Codecov Report
-        uses: codecov/codecov-action@v2
-
-  windows-build:
-    name: Build on Windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: 21
-      - name: Build with Gradle
-        env:
-          packageUser: ${{ github.actor }}
-          packagePAT: ${{ secrets.GITHUB_TOKEN }}
-          JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
-        run: |
-            ./gradlew.bat build -x test --stacktrace --console=plain
-            ./gradlew.bat test --stacktrace --console=plain
-
-  ubuntu-build-without-native-tests:
-      name: Build on Ubuntu without native tests
-      runs-on: ubuntu-latest
-      steps:
-          - name: Checkout Repository
-            uses: actions/checkout@v3
-          - name: Set up JDK 21
-            uses: actions/setup-java@v3
-            with:
-                distribution: 'adopt'
-                java-version: 21
-          - name: Build with Gradle
-            env:
-                packageUser: ${{ github.actor }}
-                packagePAT: ${{ secrets.GITHUB_TOKEN }}
-            run: ./gradlew build -x test --stacktrace --console=plain
+  call_workflow:
+    name: Run PR Build Workflow
+    if: ${{ github.repository_owner == 'ballerina-platform' }}
+    uses: ballerina-platform/ballerina-library/.github/workflows/pull-request-build-template.yml@dev
+    secrets: inherit
