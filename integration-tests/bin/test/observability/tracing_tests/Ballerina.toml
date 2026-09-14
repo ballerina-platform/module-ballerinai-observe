@@ -1,0 +1,7 @@
+[package]
+org = "intg_tests"
+name = "tracing_tests"
+version = "0.0.1"
+
+[build-options]
+observabilityIncluded=true
