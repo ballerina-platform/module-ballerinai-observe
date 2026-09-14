@@ -89,7 +89,7 @@ service / on new testobserve:Listener(19095) {
         }
         var expectedResult = 1000;
         record {int w3; int w4;} actualResults = wait {w3, w4};
-        if (actualResults.w3 != expectedResult && actualResults.w4 != expectedResult) {
+        if (actualResults.w3 != expectedResult || actualResults.w4 != expectedResult) {
             error err = error("failed to find the sum of first " + n.toString() + " numbers. w3 result: "
                 + actualResults.w3.toString() + " w4 result: " + actualResults.w4.toString() + " expectedResult: "
                 + expectedResult.toString());

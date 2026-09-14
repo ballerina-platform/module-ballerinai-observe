@@ -43,7 +43,6 @@ service /testServiceSix on new testobserve:Listener(19096) {
         _ = checkpanic observe:addTagToSpan("resource", "resourceOne", customSpanTwoId);
         _ = checkpanic observe:addTagToSpan("custom", "true", customSpanTwoId);
         _ = checkpanic observe:addTagToSpan("index", "2", customSpanTwoId);
-        checkpanic caller->respond("Hello! from resource one");
         checkpanic observe:finishSpan(customSpanTwoId);
 
         var err = observe:addTagToSpan("disallowed_tag", "true", customSpanTwoId);
@@ -51,6 +50,7 @@ service /testServiceSix on new testobserve:Listener(19096) {
             error panicErr = error("tag added to finished span which should not have been added");
             panic panicErr;
         }
+        checkpanic caller->respond("Hello! from resource one");
     }
 
     resource function post resourceTwo(testobserve:Caller caller) {
