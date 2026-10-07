@@ -46,6 +46,7 @@ public class SpanContextTestCase extends TracingBaseTestCase {
         Type type = new TypeToken<Map<String, Object>>() {
         }.getType();
         Map<String, Object> spanContext = new Gson().fromJson(data, type);
+        Thread.sleep(1000);
 
         List<BMockSpan> spanList = getFinishedSpans("testServiceSeven",
                 "intg_tests/tracing_tests:0.0.1", "/resourceOne");
