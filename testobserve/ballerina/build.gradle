@@ -93,7 +93,7 @@ task commitTomlFiles {
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 commandLine 'cmd', '/c', "git commit Ballerina.toml Dependencies.toml -m \"[Automated] Update the native jar versions\""
             } else {
-                commandLine 'sh', '-c', "git commit Ballerina.toml Dependencies.toml '[Automated] Update the native jar versions'"
+                commandLine 'sh', '-c', "git commit Ballerina.toml Dependencies.toml -m '[Automated] Update the native jar versions'"
             }
         }
     }
